@@ -146,7 +146,8 @@ namespace OfficeOpenXml.Utils
             }
             for (int i = 0; i < t.Length; i++)
             {
-                if (t[i] <= 0x1f && t[i] != '\t' && t[i] != '\n' && t[i] != '\r') //Not Tab, CR or LF
+                if (t[i] <= 0x1f && ((t[i] != '\t' && t[i] != '\n' && t[i] != '\r') || //Not Tab, CR or LF
+                    (t[i] == '\r' && (i == t.Length - 1 || t[i + 1] != '\n')))) //CR not followed by LF
                 {
                     sw.Write("_x00{0}_", (t[i] < 0xf ? "0" : "") + ((int)t[i]).ToString("X"));
                 }
@@ -179,7 +180,10 @@ namespace OfficeOpenXml.Utils
             }
             for (int i = 0; i < t.Length; i++)
             {
-                if (t[i] <= 0x1f && ((t[i] != '\t' && t[i] != '\n' && t[i] != '\r' && encodeTabCRLF == false) || encodeTabCRLF)) //Not Tab, CR or LF
+                if (t[i] <= 0x1f && ( encodeTabCRLF ||
+                    (t[i] != '\t' && t[i] != '\n' && t[i] != '\r' ) || //Not Tab, CR or LF
+                    (t[i] == '\r' && (i == t.Length - 1 || t[i + 1] != '\n'))) //CR not followed by LF
+                    )
                 {
                     sb.AppendFormat("_x00{0}_", (t[i] < 0xf ? "0" : "") + ((int)t[i]).ToString("X"));
                 }
